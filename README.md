@@ -24,5 +24,5 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 
 
 ## Sources
-
-https://reference.langchain.com/python/langchain-community
+https://docs.trychroma.com/docs/
+https://reference.langchain.com/
