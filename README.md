@@ -21,3 +21,8 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 |:------ |:---------:|:-------------:|
 | Mistral | reponses stables, pertinentes, Connaissances gloabale accrue  (langues, logique...) | Plus demandeur en ressources, plus energivore
 | Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, protabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif
+
+
+## Sources
+
+https://reference.langchain.com/python/langchain-community
