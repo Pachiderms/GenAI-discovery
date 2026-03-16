@@ -1,4 +1,4 @@
-# GenAI-discovery
+# GenAI-discovery (1 week challenge)
 ## Description
 Ce projet met en place un environnement souverain de test complet pour l'expérimentation de modèles d'IA générative en local tout en garantissant la confidentialité absolue des données.
 - Infrastructure : Déploiement de modèles open-source via Ollama (Mistral:7B, Phi3) en local.
