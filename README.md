@@ -1,8 +1,12 @@
 # GenAI-discovery
 ## Description
-This project aims to...
+Ce projet met en place un environnement de test complet pour l'expérimentation de modèles d'IA générative en local tout en garantissant la confidentialité absolue des données.
+- Infrastructure : Déploiement de modèles open-source via Ollama (Mistral:7B, Phi3) en local.
+- RAG (Retrieval-Augmented Generation): Développement d'un script Python utilisant LangChain et ChromaDB pour indexer et interroger des documents PDF privés.
+- Optimisation : Mise en place d'une persistance de base de données vectorielle pour éviter la redondance des calculs d'embeddings.
+- Benchmarking : Analyse comparative des performances de génération (vitesse en tokens/sec vs précision du raisonnement).
 ## Tests
-### 1. Tests réalisés avec le script ./python/model_benchmark.py
+### 1. Benchmark -> ./benchmark
 ![](images/benchmark_m_phi%20.png)
 On remarque une différence très marquée entre les deux modèles notamment sur le nombre de tokens/sec avec 90.30 pour mistral contre 151.92 pour phi3. Cela s'explique par le fait que mistral est un modèle à 7 millards de paramètres contre 3,8 milliards pour phi3.
 
@@ -16,13 +20,23 @@ Phi3 de par son nombre de paramètres reduit comparé à mistral à une efficaci
 - phi3 lui, ne remet pas en question l'assertion de base et se permet de rajouter du contexte pour justifier l'erreur. Le modèle construit des phrases grammaticalement incorrectes (surrement du à une traduction compliquée pour le modèle) et/ou difficles à comprendre pour un élève dde primaire.
 De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il est incapable de le reconnaître et se contente de reformuler sa réponse. Après plusieurs tentatives, le modèle étant incapable de répondre génère une réponse hors sujet de plus de 100 lignes et bascule en anglais pour la réponse.
 
-
+## Conclusion, Résumé
 |        | Avantages | Inconvénients |
 |:------ |:---------:|:-------------:|
 | Mistral | reponses stables, pertinentes, Connaissances gloabale accrue  (langues, logique...) | Plus demandeur en ressources, plus energivore
-| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, protabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif
+| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, protabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
 
+## IA Generative locale (RAG) -> ./rag/
+### 1. Déploiement d'un Pipeline RAG
+Mise en place d'un système capable d'extraire des informations spécifiques depuis des PDF volumineux sans connexion internet avec langchain et ChromaDB.
+### 2. Persistence des données
+Optimisation de la base de données pour éviter la redondance d'indexation (Logique de stockage local persistant).
+### 3. Protection des données
+Approche locale sans appels à une API tierce.
+J'ai favorisé l'usage d'un modèle Européen: Mistral, acteur qui respecte les standards  transparence
 
 ## Sources
-https://docs.trychroma.com/docs/
-https://reference.langchain.com/
+- https://huggingface.co/
+- https://ollama.com/
+- https://docs.trychroma.com/docs/
+- https://reference.langchain.com/
