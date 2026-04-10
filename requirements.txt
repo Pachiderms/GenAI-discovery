@@ -1,0 +1,7 @@
+langchain_chroma==1.1.0
+langchain_classic==1.0.3
+langchain_community==0.4.1
+langchain_text_splitters==1.1.1
+numpy==2.4.4
+ollama==0.6.1
+PyAudio==0.2.14
