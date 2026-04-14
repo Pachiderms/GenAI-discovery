@@ -34,6 +34,40 @@ Optimisation de la base de données pour éviter la redondance d'indexation (Log
 ### 3. Protection des données
 Approche locale sans appels à une API tierce.
 J'ai favorisé l'usage d'un modèle Européen: Mistral, acteur qui respecte les standards de transparence
+## Remarques
+### Réponse avec la recherche par similarity (Similarity Search)
+```bash
+retriever = collection.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 10}
+)
+```
+![](images/recherche_similarity_simple.png)
+### Réponse avec la recherche par MMR (Maximal Marginal Relevance)
+```bash
+retriever = collection.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 10}
+)
+```
+![](images/recherche_mmr.png)
+### Réponse avec la recherche Similarity Score Threshold
+```bash
+retriever = collection.as_retriever(
+    search_type="similarity_score_threshold",
+    search_kwargs={"score_threshold": 0.2}
+)
+```
+![](images/similarity_score_threshold.png)
+
+### On voit que les 3 méthodes sont équivalentes. Cependant en affinant la recherche on se retrouve rapidement aves des résultats plus satisfaisants
+```bash
+retriever = collection.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 10, "fetch_k": 20, "lambda_mult": 0.25, "score_threshold": 0.2}
+)
+```
+![](images/recherche_mmr_affinee.png)
 
 ## Sources
 - [HuggingFace](https://huggingface.co/)

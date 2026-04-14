@@ -50,18 +50,15 @@ FILES_PATHS = [os.path.join(FILES_DIR, file) for file in FILES]
 EMBEDDING = OllamaEmbeddings(model="mistral")
 COLLECTION = "rag_collection"
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+collection = None
 
 async def load_file(file_path):
     log.info(f"Chargement du fichier : {file_path}")
     ext = file_path.split(".")[-1].lower()
+    loader = None
     if ext == "pdf":
         try:
             loader = PyPDFLoader(file_path=file_path, mode="single")
-        except Exception as e:
-            log.err(f"Erreur lors du chargement du fichier {file_path} : {e}")
-    elif ext == "docx":
-        try:
-            loader = Docx2txtLoader(file_path=file_path)
         except Exception as e:
             log.err(f"Erreur lors du chargement du fichier {file_path} : {e}")
     elif ext == "docx":
@@ -80,7 +77,7 @@ async def load_file(file_path):
     data = await loop.run_in_executor(None, loader.load)
     return data
 
-async def main():
+async def init_db():
     if not os.path.exists(DB_DIR):
         log.warn("Le répertoire de la base de données n'existe pas. Création du répertoire...")
         if not os.path.exists(FILES_DIR):
@@ -123,21 +120,27 @@ async def main():
                 for chunk in chunks:
                     chunk.metadata['source'] = file_path
                 
-                collection.add_documents(documents=chunks)    
+                collection.add_documents(documents=chunks)
 
     log.success("Collection chargée avec succès!")
+    return collection
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    collection = asyncio.run(init_db())
+    # Après avoir chargé la collection
+    res = collection.get(include=["metadatas", "documents"])
+    metadatas = [meta.get('source') for meta, doc in zip(res['metadatas'], res['documents'])]
+    metadatas = list(set(metadatas))
+    print(f"Fichiers présents dans la collection : {metadatas}")
     
+    retriever = collection.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k": 10, "fetch_k": 20, "lambda_mult": 0.25, "score_threshold": 0.2}
+    )
     qa_chain = RetrievalQA.from_chain_type(
         llm=OllamaLLM(model="mistral"),
         chain_type="stuff",
-        retriever=Chroma(
-            embedding_function=EMBEDDING,
-            persist_directory=DB_DIR,
-            collection_name=COLLECTION
-        ).as_retriever()
+        retriever=retriever
     )
     
     while 1:
@@ -152,16 +155,17 @@ if __name__ == "__main__":
             with mic as source:
                 r.adjust_for_ambient_noise(source)
                 log.info("Parlez maintenant...")
-                audio = r.listen(source, timeout=5)
                 try:
+                    audio = r.listen(source, timeout=5)
                     rec.AcceptWaveform(audio.get_raw_data(convert_rate=16000, convert_width=2))
                     res = json.loads(rec.Result())
-                    valid = input(f"Vous avez dit : '{res['text']}'?\n(N/Non to retry) : ")
-                    if valid.lower() == "non" or valid.lower() == "n":
-                        continue
-                    else:
+                    try:
+                        valid = input(f"Vous avez dit : '{res['text']}'?\n(Enter: Y/<Ctrl-C>: N) : ")
                         response = qa_chain.invoke(res['text'])
                         print(f'Reponse:\n {response["result"]}')
+                    except KeyboardInterrupt:
+                        log.info("Opération annulée par l'utilisateur.")
+                        continue
                 except sr.UnknownValueError:
                     log.warn("Désolé, je n'ai pas compris. Veuillez réessayer.")
                     continue
