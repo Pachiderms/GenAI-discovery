@@ -1,13 +1,18 @@
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_classic.chains import RetrievalQA
 import os
+import json
 import speech_recognition as sr
 import pyaudio
 from colored_print import log
+from vosk import Model, KaldiRecognizer
+import asyncio
+
+model = Model(model_name="vosk-model-small-fr-0.22")
+rec = KaldiRecognizer(model, 16000)
 
 pa = pyaudio.PyAudio()
 
@@ -21,18 +26,17 @@ print("Veuillez entrer l'index du périphérique d'entrée audio que vous souhai
 
 input_index = int(input())
 r = sr.Recognizer()
-r.energy_threshold = 300
+r.energy_threshold = 100
 
-m = sr.Microphone(device_index=input_index)
+mic = sr.Microphone(device_index=input_index)
 
 try:
-    with m as source:
+    with mic as source:
         r.adjust_for_ambient_noise(source)
         log.info("Test de reconnaissance vocale en cours. Parlez maintenant...")
         audio = r.listen(source, timeout=5)
         try:
-            test_text = r.recognize_google(audio, language="fr-FR")
-            log.success(f"Test réussi! Vous avez dit : '{test_text}'")
+            log.success(f"Test réussi!")
             mic_setup = True
         except sr.WaitTimeoutError:
             log.warn("Délai d'attente dépassé lors du test de reconnaissance vocale.")
@@ -42,50 +46,101 @@ except Exception as e:
 DB_DIR = "./chroma_db"
 FILES_DIR = "./rag/db/"
 FILES = os.listdir(FILES_DIR)
-EMBEDDING = OllamaEmbeddings(model="mistral:7b")
+FILES_PATHS = [os.path.join(FILES_DIR, file) for file in FILES]
+EMBEDDING = OllamaEmbeddings(model="mistral")
 COLLECTION = "rag_collection"
-collection = None
-if not os.path.exists(DB_DIR):
-    log.warn("Le répertoire de la base de données n'existe pas. Création du répertoire...")
-    if not os.path.exists(FILES_DIR):
-        log.err("Le répertoire 'rag/db/' est introuvable. Veuillez vous assurer qu'il est présent dans le répertoire de travail.")
-        exit(1)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 
-    documents = []
-    for file in FILES:
-        log.info(f"Fichier trouvé : {file}")
-        loader = PyPDFLoader(file_path=os.path.join(FILES_DIR, file), mode="single")
-        data = loader.load()
-        documents.extend(data)
+async def load_file(file_path):
+    log.info(f"Chargement du fichier : {file_path}")
+    ext = file_path.split(".")[-1].lower()
+    if ext == "pdf":
+        try:
+            loader = PyPDFLoader(file_path=file_path, mode="single")
+        except Exception as e:
+            log.err(f"Erreur lors du chargement du fichier {file_path} : {e}")
+    elif ext == "docx":
+        try:
+            loader = Docx2txtLoader(file_path=file_path)
+        except Exception as e:
+            log.err(f"Erreur lors du chargement du fichier {file_path} : {e}")
+    elif ext == "docx":
+        try:
+            loader = Docx2txtLoader(file_path=file_path)
+        except Exception as e:
+            log.err(f"Erreur lors du chargement du fichier {file_path} : {e}")
+    elif ext == "txt":
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return [{"page_content": content, "metadata": {"source": file_path}}]
+    else:
+        log.err(f"Type de fichier non supporté : {ext}")
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = text_splitter.split_documents(documents)
+    loop = asyncio.get_running_loop()
+    data = await loop.run_in_executor(None, loader.load)
+    return data
 
-    collection = Chroma.from_documents(
-        documents=chunks,
-        embedding=EMBEDDING,
-        persist_directory=DB_DIR,
-        collection_name=COLLECTION
-    )
-else:
-    log.info("Le répertoire de la base de données existe déjà. Chargement de la collection existante...")
-    collection = Chroma(
-        embedding_function=EMBEDDING,
-        persist_directory=DB_DIR,
-        collection_name=COLLECTION
-    )
+async def main():
+    if not os.path.exists(DB_DIR):
+        log.warn("Le répertoire de la base de données n'existe pas. Création du répertoire...")
+        if not os.path.exists(FILES_DIR):
+            log.err("Le répertoire 'rag/db/' est introuvable. Veuillez vous assurer qu'il est présent dans le répertoire de travail.")
+            exit(1)
 
-log.success("Collection chargée avec succès!")
+        documents = []
+        log.info(f"Chargement des fichiers PDF depuis le répertoire '{FILES_DIR}' cela peut prendre un peu de temps...")
+        for file_path in FILES_PATHS:
+            log.info(f"Fichier trouvé : {file_path}")
+            data = await load_file(file_path)
+            documents.extend(data)
 
-qa_chain = RetrievalQA.from_chain_type(
-    llm=Ollama(model="mistral:7b"),
-    chain_type="stuff",
-    retriever=collection.as_retriever()
-)
+        chunks = text_splitter.split_documents(documents)
+
+        collection = Chroma.from_documents(
+            documents=chunks,
+            embedding=EMBEDDING,
+            persist_directory=DB_DIR,
+            collection_name=COLLECTION
+        )
+    else:
+        log.info("Le répertoire de la base de données existe déjà.")
+        log.info("Vérification des fichiers présents dans la collection...")
+            
+        collection = Chroma(
+            embedding_function=EMBEDDING,
+            persist_directory=DB_DIR,
+            collection_name=COLLECTION
+        )
+        
+        res = collection.get(include=["metadatas", "documents"])
+        metadatas = [meta.get('source') for meta, doc in zip(res['metadatas'], res['documents'])]
+        metadatas = list(set(metadatas))
+        for file_path in FILES_PATHS:
+            if not file_path in metadatas:
+                log.warn(f"Le fichier '{file_path}' n'est pas présent dans la collection. Ajout en cours...")
+                data = await load_file(file_path)
+                chunks = text_splitter.split_documents(data)
+                for chunk in chunks:
+                    chunk.metadata['source'] = file_path
+                
+                collection.add_documents(documents=chunks)    
+
+    log.success("Collection chargée avec succès!")
 
 if __name__ == "__main__":
+    asyncio.run(main())
+    
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=OllamaLLM(model="mistral"),
+        chain_type="stuff",
+        retriever=Chroma(
+            embedding_function=EMBEDDING,
+            persist_directory=DB_DIR,
+            collection_name=COLLECTION
+        ).as_retriever()
+    )
+    
     while 1:
-        question = None
         if mic_setup:
             log.info("Vous pouvez poser une question en tapant ou en utilisant la commande 'listen' pour parler.")
         else:
@@ -94,19 +149,18 @@ if __name__ == "__main__":
         if demand.lower() == 'exit':
             break
         elif demand.lower() == 'listen' and mic_setup:
-            log.info("Écoute en cours...")
-            with m as source:
+            with mic as source:
                 r.adjust_for_ambient_noise(source)
                 log.info("Parlez maintenant...")
                 audio = r.listen(source, timeout=5)
                 try:
-                    question = r.recognize_google(audio, language="fr-FR")
-                    res = input(f"Vous avez dit : '{question}'?\n(O/N) : ")
-                    if res.lower() != "oui" and res.lower() != "o":
-                        question = None
+                    rec.AcceptWaveform(audio.get_raw_data(convert_rate=16000, convert_width=2))
+                    res = json.loads(rec.Result())
+                    valid = input(f"Vous avez dit : '{res['text']}'?\n(N/Non to retry) : ")
+                    if valid.lower() == "non" or valid.lower() == "n":
                         continue
                     else:
-                        response = qa_chain.invoke(question)
+                        response = qa_chain.invoke(res['text'])
                         print(f'Reponse:\n {response["result"]}')
                 except sr.UnknownValueError:
                     log.warn("Désolé, je n'ai pas compris. Veuillez réessayer.")
@@ -115,8 +169,7 @@ if __name__ == "__main__":
                     log.warn("Délai d'attente dépassé.")
                     continue
         else:
-            question = demand
-            response = qa_chain.invoke(question)
+            response = qa_chain.invoke(demand)
             print(f'Reponse:\n {response["result"]}')
             
-pa.terminate()
+    pa.terminate()

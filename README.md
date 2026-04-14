@@ -28,7 +28,7 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 
 ## IA Generative locale (RAG) -> ./rag/
 ### 1. Déploiement d'un Pipeline RAG
-Mise en place d'un système capable d'extraire des informations spécifiques depuis des PDF volumineux avec langchain et ChromaDB.
+Mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux avec langchain et ChromaDB.
 ### 2. Persistence des données
 Optimisation de la base de données pour éviter la redondance d'indexation (Logique de stockage local persistant).
 ### 3. Protection des données
@@ -41,4 +41,5 @@ J'ai favorisé l'usage d'un modèle Européen: Mistral, acteur qui respecte les 
 - [ChromaDB](https://docs.trychroma.com/docs/)
 - [Langchain](https://reference.langchain.com/)
 - [SpeechRecognition](https://pypi.org/project/SpeechRecognition/)
+- [Vosk](https://alphacephei.com/vosk/)
 - [PyAudio](https://people.csail.mit.edu/hubert/pyaudio/docs/)
