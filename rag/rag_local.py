@@ -49,7 +49,7 @@ FILES = os.listdir(FILES_DIR)
 FILES_PATHS = [os.path.join(FILES_DIR, file) for file in FILES]
 EMBEDDING = OllamaEmbeddings(model="mistral")
 COLLECTION = "rag_collection"
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
 collection = None
 
 async def load_file(file_path):

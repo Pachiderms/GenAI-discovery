@@ -28,7 +28,7 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 
 ## IA Generative locale (RAG) -> ./rag/
 ### 1. Déploiement d'un Pipeline RAG
-Mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux avec langchain et ChromaDB.
+utilisation de Langchain et ChromaDB pour la mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux chargés par chunks de 500 caractères avec un overlap de 100 pour une pertinence optimale dans les réponses de l'agent.
 ### 2. Persistence des données
 Optimisation de la base de données pour éviter la redondance d'indexation (Logique de stockage local persistant).
 ### 3. Protection des données
@@ -68,6 +68,9 @@ retriever = collection.as_retriever(
 )
 ```
 ![](images/recherche_mmr_affinee.png)
+
+### Pourquoi choisir le MMR ?
+A mesure que la base de données grandit, le MMR permet d'éviter la redondance des réponses en favorisant la diversité dans ses choix. On obtient ainsi un compromis entre pertinance et diversité ce qu'on ne retrouve pas avec les autres options.
 
 ## Sources
 - [HuggingFace](https://huggingface.co/)
