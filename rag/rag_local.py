@@ -44,7 +44,7 @@ except Exception as e:
     log.err(f"Erreur lors de l'accès au microphone : {e}")
 
 DB_DIR = "./chroma_db"
-FILES_DIR = "./rag/db/"
+FILES_DIR = "./db/"
 FILES = os.listdir(FILES_DIR)
 FILES_PATHS = [os.path.join(FILES_DIR, file) for file in FILES]
 EMBEDDING = OllamaEmbeddings(model="mistral")
