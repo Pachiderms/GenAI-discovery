@@ -23,8 +23,8 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 ## Conclusion, Résumé
 |        | Avantages | Inconvénients |
 |:------ |:---------:|:-------------:|
-| Mistral | reponses stables, pertinentes, Connaissances gloabale accrue  (langues, logique...) | Plus demandeur en ressources, plus energivore
-| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, portabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
+| Mistral | reponses stables, pertinentes, Connaissances gloabales accrues  (langues, logique...) | Plus demandeur en ressources, plus energivore
+| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, portabilité | Connaissances gloabales moyennes (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
 
 ## IA Generative locale (RAG) -> ./rag/
 ### 1. Déploiement d'un Pipeline RAG
