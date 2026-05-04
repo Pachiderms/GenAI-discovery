@@ -24,11 +24,11 @@ De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il es
 |        | Avantages | Inconvénients |
 |:------ |:---------:|:-------------:|
 | Mistral | reponses stables, pertinentes, Connaissances gloabale accrue  (langues, logique...) | Plus demandeur en ressources, plus energivore
-| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, protabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
+| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, portabilité | Connaissances gloabale moyenne (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
 
 ## IA Generative locale (RAG) -> ./rag/
 ### 1. Déploiement d'un Pipeline RAG
-utilisation de Langchain et ChromaDB pour la mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux chargés par chunks de 500 caractères avec un overlap de 100 pour une pertinence optimale dans les réponses de l'agent.
+Utilisation de Langchain et ChromaDB pour la mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux chargés par chunks de 500 caractères avec un overlap de 100 pour une pertinence optimale dans les réponses de l'agent.
 ### 2. Persistence des données
 Optimisation de la base de données pour éviter la redondance d'indexation (Logique de stockage local persistant).
 ### 3. Protection des données
