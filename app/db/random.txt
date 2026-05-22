@@ -1,0 +1,87 @@
+Wikipédia:Une page au hasard
+
+Page
+Discussion
+Lire
+Modifier le code
+Voir l’historique
+
+Outils
+Apparence masquer
+Taille du texte
+
+Petite
+
+Standard
+
+Grande
+Largeur
+
+Standard
+
+Large
+Couleur (bêta)
+
+Automatique
+
+Clair
+
+Sombre
+Raccourcis [+]
+WP:RAND
+WP:RANDOM
+WP:HASARD
+WP:ALEA
+WP:ALEATOIRE
+Une page au hasard est une fonctionnalité de MediaWiki (le logiciel utilisé par Wikipédia) qui permet de tirer une page au hasard parmi toutes celles existantes.
+
+Accès
+Elle est accessible par Spécial:Page au hasard (ou Spécial:Random, ou bien Spécial:Randompage) ; l'utilisateur, en suivant ce lien, est alors redirigé vers une page sélectionnée par le logiciel. Un lien vers cette page spéciale est placé dans la boîte « Navigation », dans la colonne de gauche.
+• Sur Windows, le Raccourcis clavier est le suivant : Alt + ⇧ Maj + X.
+• Sur MacOS, le raccourcis clavier est le suivant : control + option + X.
+
+Le passage par la page spéciale n'est pas conservé dans l'historique du navigateur, si bien que revenir à la page précédente ne ramène pas à la page spéciale (et ne relance donc pas une nouvelle page au hasard), mais à la page où se trouvait l'utilisateur avant d'y accéder.
+
+Espace de nom
+Par défaut, la fonctionnalité renvoie un article encyclopédique, c'est-à-dire une page de l'espace de noms principal. Néanmoins, il est possible de choisir un autre espace de nom :
+
+Liste des types de page pouvant être tirés au hasard
+Espace de noms	Version originale	En français
+1	Discussion	Spécial:Random/Talk	Spécial:Page au hasard/Discussion
+2	Utilisateur	Spécial:Random/User	Spécial:Page au hasard/Utilisateur
+3	Discussion utilisateur	Spécial:Random/User talk	Spécial:Page au hasard/Discussion utilisateur
+4	Wikipédia	Spécial:Random/Wikipedia	Spécial:Page au hasard/Wikipédia
+5	Discussion Wikipédia	Spécial:Random/Wikipedia talk	Spécial:Page au hasard/Discussion Wikipédia
+6	Fichier	Spécial:Random/File	Spécial:Page au hasard/Fichier
+7	Discussion fichier	Spécial:Random/File talk	Spécial:Page au hasard/Discussion fichier
+8	MediaWiki	Spécial:Random/MediaWiki	Spécial:Page au hasard/MediaWiki
+9	Discussion MediaWiki	Spécial:Random/MediaWiki talk	Spécial:Page au hasard/Discussion MediaWiki
+10	Modèle	Spécial:Random/Template	Spécial:Page au hasard/Modèle
+11	Discussion modèle	Spécial:Random/Template talk	Spécial:Page au hasard/Discussion modèle
+12	Aide	Spécial:Random/Help	Spécial:Page au hasard/Aide
+13	Discussion aide	Spécial:Random/Help talk	Spécial:Page au hasard/Discussion aide
+14	Catégorie	Spécial:Random/Category	Spécial:Page au hasard/Catégorie
+15	Discussion catégorie	Spécial:Random/Category talk	Spécial:Page au hasard/Discussion catégorie
+100	Portail		Spécial:Page au hasard/Portail
+101	Discussion Portail		Spécial:Page au hasard/Discussion Portail
+102	Projet		Spécial:Page au hasard/Projet
+103	Discussion Projet		Spécial:Page au hasard/Discussion Projet
+104	Référence		Spécial:Page au hasard/Référence
+105	Discussion Référence		Spécial:Page au hasard/Discussion Référence
+Les différents alias pour chaque espace de noms peuvent également être utilisés. Ainsi, Spécial:Page au hasard/Utilisatrice est équivalent à Spécial:Page au hasard/Utilisateur, Spécial:Page au hasard/Image à Spécial:Page au hasard/Fichier, Spécial:Page au hasard/WP à Spécial:Page au hasard/Wikipédia.
+
+Il est également possible de sélectionner une page de redirection au hasard, grâce à la page spéciale Spécial:RandomRedirect (Spécial:Redirection au hasard).
+
+À propos du caractère aléatoire
+Les pages n'ont pas toutes les mêmes chances de sortir : en effet, la probabilité pour chacune d'elles d'être sélectionnée est elle-même aléatoire[1], ce qui ne prouve en rien que toutes les pages n'ont pas la même probabilité d'être tirée.
+
+Utilisations
+Dans Wikipédia
+« Que trouve-t-on sur Wikipédia ? », un projet qui vise à apprécier comment les articles de Wikipédia se répartissent par thèmes, en se basant sur un échantillon de 1 000 entrées sélectionnées aléatoirement par cette fonctionnalité.
+« Random page patrol » sur Wikipédia en anglais, un comité de contributeurs ayant pour but d'améliorer des articles choisis au hasard grâce à cette fonctionnalité.
+À l'extérieur de Wikipédia
+« Wikipedia Names Your Band », un mème Internet qui vise à baptiser un groupe de musique fictif en se basant sur le titre d'un article de Wikipédia tiré au hasard grâce à cette fonctionnalité.
+Notes et références
+(en) « Is the "random article" feature really random? », sur la FAQ technique de Wikipédia en anglais.
+Voir aussi
+(en) Help:Random page, sur le site de MediaWiki

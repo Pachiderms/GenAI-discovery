@@ -74,14 +74,14 @@ function startRecording() {
                 // Envoi du Blob vers FastAPI
                 const formData = new FormData();
                 formData.append('file', audioBlob, 'recording.wav');
-                fetch('http://localhost:8000/process-audio', {
+                fetch('http://localhost:8000/transcribe', {
                     method: 'POST',
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
                     appendMessage('bot', data.transcription);
-                    // Optionnel: envoyer la transcription à /ask pour obtenir une réponse
+                    // envoyer la transcription à /ask pour obtenir une réponse
                     return fetch('http://localhost:8000/ask', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -94,7 +94,7 @@ function startRecording() {
                 })
                 .catch(e => console.error("Erreur audio:", e));
             }
-            // Arrêter l'enregistrement après 5 secondes (ou selon ton besoin)
+            // Arrêter l'enregistrement après 5 secondes
             setTimeout(() => {
                 mediaRecorder.stop();
                 stream.getTracks().forEach(track => track.stop());
@@ -102,6 +102,3 @@ function startRecording() {
         })
         .catch(e => console.error("Erreur accès micro:", e));
 }
-
-// Note: Pour startRecording/stopRecording, tu utiliseras MediaRecorder 
-// et tu enverras le Blob vers ton endpoint FastAPI /process-audio

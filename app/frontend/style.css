@@ -1,6 +1,8 @@
+@import "tailwindcss";
+
 :root {
-    --bg-color: #1a1a2e;
-    --chat-bg: #16213e;
+    --bg-color: #292727;
+    --chat-bg: #b7bccc;
     --user-msg: #0f3460;
     --bot-msg: #533483;
     --text-color: #e94560;
@@ -19,19 +21,19 @@ body {
 
 .app-container {
     width: 90%;
-    max-width: 600px;
-    height: 80vh;
+    max-width: 90%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     background: var(--chat-bg);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: #000000;
+    border-radius: 30px;
     overflow: hidden;
 }
 
 .chat-box {
     flex: 1;
-    padding: 20px;
+    padding: 5px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -48,26 +50,42 @@ body {
 .user { align-self: flex-end; background-color: var(--user-msg); border-bottom-right-radius: 2px; }
 .bot { align-self: flex-start; background-color: var(--bot-msg); border-bottom-left-radius: 2px; }
 
-.controls { padding: 20px; background: #0f3460; }
+.controls { display: flex; align-items: center; padding: 20px; background: #0f3460; }
 
-.input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+.controls > div:first-child {
+    display: flex;
+}
 
-input {
+.input-group { 
+    display: flex; 
+    flex: 1; 
+}
+
+.text-area { 
     flex: 1;
-    padding: 10px;
-    border-radius: 5px;
+    min-width: 150px;
+    padding: 5px;
+    resize: none;
+}
+
+#send-btn {
+    padding: 0 15px;
+    border-radius: 15px;
     border: none;
-    outline: none;
+    background-color: #17186b25;
+    color: rgba(255, 255, 255, 0.993);
+    cursor: pointer;
 }
 
 #mic-btn {
-    width: 60px;
-    height: 60px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     transition: 0.3s;
-    font-size: 24px;
+    font-size: 23px;
+    flex-shrink: 0; 
 }
 
 .mic-off { background-color: #e94560; }
