@@ -1,16 +1,26 @@
 FROM python:3.10-slim
 
-RUN apt-get update && apt-get install -y \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app:/app/srcs
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libasound2-dev portaudio19-dev libportaudio2 libportaudiocpp0 \
-    gcc ffmpeg \
+    curl zstd gcc ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY srcs/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt && pip install python-multipart
+
+RUN curl -fsSL https://ollama.com/install.sh | sh
 
 COPY ./vosk-model-small-fr-0.22 /app/vosk-model
+COPY srcs/ /app/srcs/
 
-COPY . .
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+CMD ["/entrypoint.sh"]

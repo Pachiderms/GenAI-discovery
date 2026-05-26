@@ -50,7 +50,7 @@ body {
 .user { align-self: flex-end; background-color: var(--user-msg); border-bottom-right-radius: 2px; }
 .bot { align-self: flex-start; background-color: var(--bot-msg); border-bottom-left-radius: 2px; }
 
-.controls { display: flex; align-items: center; padding: 20px; background: #0f3460; }
+.controls { display: flex; align-items: center; padding: 20px; background: #0f3460; margin: 10px; border-radius: 15px; }
 
 .controls > div:first-child {
     display: flex;
@@ -66,20 +66,21 @@ body {
     min-width: 150px;
     padding: 5px;
     resize: none;
+    margin-left: 10px;
 }
 
 #send-btn {
-    padding: 0 15px;
-    border-radius: 15px;
+    padding: 0 13px;
+    font-size: 30px;
+    border-radius: 10px;
     border: none;
-    background-color: #17186b25;
+    background-color: #0000003a;
     color: rgba(255, 255, 255, 0.993);
     cursor: pointer;
 }
 
 #mic-btn {
-    width: 42px;
-    height: 42px;
+    padding: 12px 12px;
     border-radius: 50%;
     border: none;
     cursor: pointer;

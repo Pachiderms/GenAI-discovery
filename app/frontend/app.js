@@ -2,9 +2,8 @@ const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 const micBtn = document.getElementById('mic-btn');
-const statusText = document.getElementById('status-text');
 
-// 1. Charger l'historique au démarrage
+// Charger l'historique au démarrage
 window.addEventListener('load', async () => {
     try {
         const response = await fetch('http://localhost:8000/history');
@@ -18,7 +17,7 @@ window.addEventListener('load', async () => {
     }
 });
 
-// 2. Envoyer un message texte
+// Envoyer un message texte
 sendBtn.onclick = async () => {
     const text = userInput.value;
     if (!text) return;
@@ -35,21 +34,20 @@ sendBtn.onclick = async () => {
     appendMessage('bot', data.answer);
 };
 
-// 3. Gestion simplifiée du Micro (Web Audio API)
+// Gestion du Micro
 let isRecording = false;
 micBtn.onclick = () => {
     if (!isRecording) {
         startRecording();
         micBtn.className = 'mic-on';
-        statusText.innerText = "Écoute en cours...";
     } else {
         stopRecording();
         micBtn.className = 'mic-off';
-        statusText.innerText = "Traitement audio...";
     }
     isRecording = !isRecording;
 };
 
+// Fonction pour afficher les messages dans le chat
 function appendMessage(sender, text) {
     const div = document.createElement('div');
     div.className = `message ${sender}`;
@@ -58,9 +56,8 @@ function appendMessage(sender, text) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
+// Implémentation de l'enregistrement audio avec MediaRecorder
 function startRecording() {
-    // Implémentation de l'enregistrement audio avec MediaRecorder
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
             const mediaRecorder = new MediaRecorder(stream);
@@ -101,4 +98,8 @@ function startRecording() {
             }, 5000);
         })
         .catch(e => console.error("Erreur accès micro:", e));
+}
+
+function stopRecording() {
+    // Cette fonction est gérée par le timeout dans startRecording
 }
