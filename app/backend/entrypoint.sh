@@ -9,10 +9,12 @@ while ! curl -s http://localhost:11434/api/tags > /dev/null; do
     sleep 1
 done
 
+echo "Ollama server is up and running."
+
 # Pull the model
-if ! ollama list | grep -q "mistral:7b"; then
+if ! ollama list | grep -q "mistral"; then
     echo "Pulling mistral:7b..."
-    #ollama pull mistral:7b
+    ollama pull mistral:7b
     echo "Model pulled successfully."
 else
     echo "Model mistral:7b already exists. Skipping pull."

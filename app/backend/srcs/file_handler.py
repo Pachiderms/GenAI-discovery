@@ -15,7 +15,7 @@ class FileHandler:
         print(f"Répertoire des fichiers : {self.files_dir}")
         print(f"Répertoire de la base de données : {self.db_dir}")
         self.files = os.listdir(self.files_dir) if self.files_dir and os.path.isdir(self.files_dir) else []
-        self.embedding = OllamaEmbeddings(model="mistral")
+        self.embedding = OllamaEmbeddings(model="mistral:7b")
         self.collection_name = "ultron"
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         self.collection = Chroma(
@@ -23,6 +23,8 @@ class FileHandler:
             persist_directory=self.db_dir,
             collection_name=self.collection_name
         )
+        
+        
 
     async def load_file(self, file_path):
         log.info(f"Chargement du fichier : {file_path}")

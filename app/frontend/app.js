@@ -25,13 +25,24 @@ sendBtn.onclick = async () => {
     appendMessage('user', text);
     userInput.value = '';
 
-    const response = await fetch('http://localhost:8000/ask', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({text: text})
-    });
-    const data = await response.json();
-    appendMessage('bot', data.answer);
+    try {
+        const response = await fetch('http://localhost:8000/ask', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question: text})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+
+        // botMsg = appendMessage('bot', "...");
+        const data = await response.json();
+        appendMessage('bot', data.answer);
+    } catch (e) {
+        console.error("Erreur envoi message:", e);
+        appendMessage('bot', "Désolé, une erreur est survenue lors de l'envoi de votre message.");
+    }
 };
 
 // Gestion du Micro
@@ -41,7 +52,6 @@ micBtn.onclick = () => {
         startRecording();
         micBtn.className = 'mic-on';
     } else {
-        stopRecording();
         micBtn.className = 'mic-off';
     }
     isRecording = !isRecording;
@@ -77,12 +87,11 @@ function startRecording() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessage('bot', data.transcription);
-                    // envoyer la transcription à /ask pour obtenir une réponse
+                    appendMessage('user', data.transcription);
                     return fetch('http://localhost:8000/ask', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({text: data.transcription})
+                        body: JSON.stringify({question: data.transcription})
                     });
                 })
                 .then(response => response.json())
@@ -100,6 +109,3 @@ function startRecording() {
         .catch(e => console.error("Erreur accès micro:", e));
 }
 
-function stopRecording() {
-    // Cette fonction est gérée par le timeout dans startRecording
-}

@@ -7,9 +7,21 @@ services:
     volumes:
       - ./backend/db:/app/db
       - ./backend/chroma_db:/app/chroma_db
-      - ollama_models:/app/ollama_models
+      - ollama_models:/root/.ollama/models
     environment:
       - OLLAMA_HOST=http://localhost:11434
+      - PYTHONPATH=/app:/app/srcs
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    mem_limit: 12gb
+    memswap_limit: 16gb
     restart: on-failure
 
   frontend:
