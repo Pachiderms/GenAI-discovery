@@ -49,8 +49,7 @@ async def health_check():
 
 @app.get("/history")
 async def get_history():
-    # Logique pour récupérer l'historique des conversations
-    pass
+    return { "chat_history" : logic.memory}
 
 @app.post("/load_files")
 async def load_files():

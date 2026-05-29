@@ -72,6 +72,8 @@ retriever = collection.as_retriever(
 ### Pourquoi choisir le MMR ?
 A mesure que la base de données grandit, le MMR permet d'éviter la redondance des réponses en favorisant la diversité dans ses choix. On obtient ainsi un compromis entre pertinance et diversité ce qu'on ne retrouve pas avec les autres options.
 
+## TODO
+
 ## Sources
 - [HuggingFace](https://huggingface.co/)
 - [Ollama](https://ollama.com/)
@@ -80,3 +82,6 @@ A mesure que la base de données grandit, le MMR permet d'éviter la redondance 
 - [SpeechRecognition](https://pypi.org/project/SpeechRecognition/)
 - [Vosk](https://alphacephei.com/vosk/)
 - [PyAudio](https://people.csail.mit.edu/hubert/pyaudio/docs/)
+- [MediaStreamRecordingAPI](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API)
+- [Vosk .wav To text](https://github.com/andrewymin/audio-to-text/blob/master/transcribe.py)
+- [Docker GPU support](https://docs.docker.com/compose/how-tos/gpu-support/)

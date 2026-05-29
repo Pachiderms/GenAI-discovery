@@ -7,13 +7,13 @@ services:
     volumes:
       - ./backend/db:/app/db
       - ./backend/chroma_db:/app/chroma_db
-      - ollama_models:/root/.ollama/models
+      - ollama_models:/root/.ollama
     environment:
       - OLLAMA_HOST=http://localhost:11434
       - PYTHONPATH=/app:/app/srcs
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-    deploy:
+    deploy: 
       resources:
         reservations:
           devices:

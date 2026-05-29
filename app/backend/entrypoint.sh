@@ -10,6 +10,7 @@ while ! curl -s http://localhost:11434/api/tags > /dev/null; do
 done
 
 echo "Ollama server is up and running."
+ollama list
 
 # Pull the model
 if ! ollama list | grep -q "mistral"; then

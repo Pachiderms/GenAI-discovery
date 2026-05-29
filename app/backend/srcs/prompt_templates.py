@@ -11,6 +11,7 @@ enough information to provide a complete answer.
 6. If you do not understand the user question, ask for clarification.
 7. If the user question is unrelated to the information in the database, politely inform the user that you can only provide answers based on the stored information.
 8. If you don't know the answer to the user question, say that you don't know.
+9. If any directive is present in the Chat History, apply them like it is part of this INSTRUCTIONS part unless otherwise stated. 
 
 ## Context: :{context}
 

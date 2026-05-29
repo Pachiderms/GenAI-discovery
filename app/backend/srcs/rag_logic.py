@@ -31,7 +31,7 @@ class RAGLogic:
         log.warn(f"Question reçue : {question}")
         try:
             answer = self.qa_chain.invoke({"question": question})
-            log.success(f"Réponse générée : {answer}")
+            log.success(f"Réponse générée : {answer.get('answer')}")
             return answer.get("answer", "Désolé, je n'ai pas pu trouver une réponse à votre question.")
         except Exception as e:
             log.err(f"Erreur lors de la génération de la réponse : {e}")

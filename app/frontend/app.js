@@ -72,12 +72,15 @@ function startRecording() {
         .then(stream => {
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.start();
-            const audioChunks = [];
+            let audioChunks = [];
             mediaRecorder.ondataavailable = event => {
                 audioChunks.push(event.data);
             }
             mediaRecorder.onstop = () => {
+                isRecording = false;
+                micBtn.className = 'mic-off';
                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                audioChunks = [];
                 // Envoi du Blob vers FastAPI
                 const formData = new FormData();
                 formData.append('file', audioBlob, 'recording.wav');
@@ -87,6 +90,10 @@ function startRecording() {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    if (! data.transcription) {
+                        appendMessage('user', 'Désolé une erreur est survenue pendant la transcription de votre message.');
+                        return;
+                    }
                     appendMessage('user', data.transcription);
                     return fetch('http://localhost:8000/ask', {
                         method: 'POST',
@@ -103,9 +110,15 @@ function startRecording() {
             // Arrêter l'enregistrement après 5 secondes
             setTimeout(() => {
                 mediaRecorder.stop();
+                isRecording = false;
+                micBtn.className = 'mic-off';
                 stream.getTracks().forEach(track => track.stop());
-            }, 5000);
+            }, 10000);
         })
-        .catch(e => console.error("Erreur accès micro:", e));
+        .catch(e => {
+            console.error("Erreur accès micro:", e);
+            isRecording = false;
+            micBtn.className = 'mic-off';
+        });
 }
 

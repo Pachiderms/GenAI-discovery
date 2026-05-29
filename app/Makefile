@@ -13,6 +13,9 @@ fclean: clean
 	rm -rf ./backend/chroma_db
 
 down:
+	${COMPOSE} down
+
+down-volumes:
 	${COMPOSE} down -v
 
 delimages:
@@ -29,4 +32,4 @@ exec-backend:
 exec-frontend:
 	${COMPOSE} exec -it frontend sh
 
-.PHONY: all datadir clean fclean down delimages re
+.PHONY: all datadir clean fclean down down-volumes delimages re
