@@ -74,7 +74,7 @@ A mesure que la base de données grandit, le MMR permet d'éviter la redondance 
 
 ## TODO
 
-## Sources
+## Resources
 - [HuggingFace](https://huggingface.co/)
 - [Ollama](https://ollama.com/)
 - [ChromaDB](https://docs.trychroma.com/docs/)
