@@ -30,7 +30,7 @@ class RAGLogic:
         self.warmup()
         
     def warmup(self):
-        log.info("Model warmup")
+        log.info("🔥Model warmup🔥")
         dummy_query = "test"
         
         docs = self.retriever.invoke(dummy_query)

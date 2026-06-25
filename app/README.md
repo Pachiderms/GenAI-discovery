@@ -64,7 +64,7 @@ Le flux d'interaction utilisateur :
 
 ## Axes d'amélioration
 * Diminuer le temps warmup qui est trop long pour un utilisateur réel
-* Certaines erreurs non critiques mais aussi non voulues apparaissent au charchegement de la base de données
+* Diminuer le temps de réponse
 
 ## Sources
 

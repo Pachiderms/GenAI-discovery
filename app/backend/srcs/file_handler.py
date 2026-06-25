@@ -7,15 +7,26 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from colored_print import log
 import spacy
+from tqdm import tqdm
+
 
 class FileHandler:
     def __init__(self):
         base_dir = os.getcwd()
         self.files_dir = os.path.join(base_dir, "db") if os.path.isdir(os.path.join(base_dir, "db")) else None
+        data = os.listdir(self.files_dir)
+        dirs = [what for what in data if os.path.isdir(what) == False]
+        files = [what for what in data if os.path.isdir(what) == True]
+        files = []
+        files = [what for what in data if os.path.isdir(what) == True]
+        dirs_paths = [os.path.join(self.files_dir, dir) for dir in dirs]
+        for dir in dirs_paths:
+            files.extend([os.path.join(dir, file) for file in os.listdir(dir)])
         self.db_dir = os.path.join(base_dir, "chroma_db")
+        self.files = files
+        log.warn(f"{self.files=}")
         print(f"Répertoire des fichiers : {self.files_dir}")
         print(f"Répertoire de la base de données : {self.db_dir}")
-        self.files = os.listdir(self.files_dir) if self.files_dir and os.path.isdir(self.files_dir) else []
         self.embedding = OllamaEmbeddings(model="nomic-embed-text")
         self.collection_name = "ultron"
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -24,9 +35,8 @@ class FileHandler:
             persist_directory=self.db_dir,
             collection_name=self.collection_name
         )
-        
+
         self.nlp = spacy.load("fr_core_news_sm")
-        
         
 
     async def load_file(self, file_path):
@@ -50,6 +60,7 @@ class FileHandler:
             return [doc]
         else:
             log.err(f"Type de fichier non supporté : {ext}")
+            return None
 
         loop = asyncio.get_running_loop()
         data = await loop.run_in_executor(None, loader.load)
@@ -64,7 +75,7 @@ class FileHandler:
 
             documents = []
             log.info(f"Chargement des fichiers PDF depuis le répertoire '{self.files_dir}' cela peut prendre un peu de temps...")
-            for file_path in self.files:
+            for file_path in tqdm(self.files, desc="Loading files", unit="file"):
                 log.info(f"Fichier trouvé : {file_path}")
                 data = await self.load_file(file_path)
                 documents.extend(data)
@@ -86,15 +97,17 @@ class FileHandler:
                 persist_directory=self.db_dir,
                 collection_name=self.collection_name
             )
-            
+
             res = self.collection.get(include=["metadatas", "documents"])
             metadatas = [meta.get('source') for meta, doc in zip(res['metadatas'], res['documents'])]
             metadatas = list(set(metadatas))
-            for file_path in self.files:
+            for file_path in tqdm(self.files, desc="Checking existing files", unit="file"):
                 if not file_path in metadatas:
                     log.warn(f"Le fichier '{file_path}' n'est pas présent dans la collection. Ajout en cours...")
                     full_path = os.path.join(self.files_dir, file_path)
                     data = await self.load_file(full_path)
+                    if data is None:
+                        continue
                     chunks = self.text_splitter.split_documents(data)
                     for chunk in chunks:
                         doc_nlp = self.nlp(chunk.page_content)
@@ -148,11 +161,11 @@ class FileHandler:
                             metadata["event"] = list(set(event))
 
                         chunk.metadata = metadata
-                try:
-                    self.collection.add_documents(documents=chunks)
-                    log.success(f"Le fichier '{file_path}' a été ajouté avec succès à la collection.")
-                except Exception as e:
-                    log.err(f"Erreur lors de l'ajout du fichier '{file_path}' à la collection : {e}")
-                    return
+                    try:
+                        self.collection.add_documents(documents=chunks)
+                        log.success(f"Le fichier '{file_path}' a été ajouté avec succès à la collection.")
+                    except Exception as e:
+                        log.err(f"Erreur lors de l'ajout du fichier '{file_path}' à la collection : {e}")
+                        continue
 
-        log.success("Collection chargée avec succès!")
+        log.success(f"Collection chargée avec succès!\nNombre de fichiers: {len(metadatas)}")

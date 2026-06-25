@@ -11,9 +11,6 @@ services:
     environment:
       - OLLAMA_HOST=http://localhost:11434
       - LLAMA_ARG_EMBEDDINGS=true
-      - PYTHONPATH=/app:/app/srcs
-      - PYTHONUNBUFFERED=1
-      - PYTHONDONTWRITEBYTECODE=1
     deploy: 
       resources:
         reservations:

@@ -12,3 +12,4 @@ pydub==0.25.1
 python_colored_print==1.1.0
 vosk==0.3.45
 spacy>=3.8.14
+tqdm>=4.68.3
