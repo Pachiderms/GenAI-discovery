@@ -33,28 +33,33 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Permettre les requêtes de n'importe quelle origine (à ajuster en production)
-    allow_methods=["*"],  # Permettre toutes les méthodes HTTP
-    allow_headers=["*"],  # Permettre tous les en-têtes
+    allow_origins=origins,    # Permettre les requêtes de n'importe quelle origine (à ajuster en production)
+    allow_methods=["*"],      # Permettre toutes les méthodes HTTP
+    allow_headers=["*"],      # Permettre tous les en-têtes
     allow_credentials=False,  # Permettre l'envoi de cookies et d'informations d'identification
 )
+    
 
 @app.get("/")
 async def root():
     return {"message": "Bienvenue sur l'API de RAG local!"}
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
+
 @app.get("/history")
 async def get_history():
-    return { "chat_history" : logic.memory}
+    return { "chat_history" : logic.history }
 
-@app.post("/load_files")
-async def load_files():
-    # Logique pour charger les fichiers PDF et les ajouter à la base de données
-    pass
+
+# @app.post("/load_files")
+# async def load_files():
+#     # Logique pour charger les fichiers PDF et les ajouter à la base de données
+#     pass
+
 
 @app.post("/ask")
 async def ask_rag(question: QuestionRequest):
@@ -63,6 +68,7 @@ async def ask_rag(question: QuestionRequest):
         return {"answer": answer}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):

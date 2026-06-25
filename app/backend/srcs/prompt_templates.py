@@ -13,9 +13,26 @@ enough information to provide a complete answer.
 8. If you don't know the answer to the user question, say that you don't know.
 9. If any directive is present in the Chat History, apply them like it is part of this INSTRUCTIONS part unless otherwise stated. 
 
-## Context: :{context}
+## Context: {context}
 
 ## Chat History: {chat_history}
+
+## Question: {question}
+"""
+
+nlp_prompt = """
+# ROLE
+- Reformule la question en l'optimisant pour une recherche de document.
+- Assure toi de conserver le sens de la question.
+- Ne retorune que ce qui est demandé dans le format spécifié (Aucun commentaire, aucune explication, etc...).
+- Assure toi de donner en sortie du JSON valide dans la langue de la question.
+
+# OUTPUT_FORMAT
+- Le format de retour DOIT etre du json:
+{{
+    'query': string (la question passée),
+    'answer': string (ta reformulation) 
+}}
 
 ## Question: {question}
 """

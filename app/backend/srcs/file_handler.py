@@ -6,6 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from colored_print import log
+import spacy
 
 class FileHandler:
     def __init__(self):
@@ -15,14 +16,16 @@ class FileHandler:
         print(f"Répertoire des fichiers : {self.files_dir}")
         print(f"Répertoire de la base de données : {self.db_dir}")
         self.files = os.listdir(self.files_dir) if self.files_dir and os.path.isdir(self.files_dir) else []
-        self.embedding = OllamaEmbeddings(model="mistral:7b")
+        self.embedding = OllamaEmbeddings(model="nomic-embed-text")
         self.collection_name = "ultron"
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         self.collection = Chroma(
             embedding_function=self.embedding,
             persist_directory=self.db_dir,
             collection_name=self.collection_name
         )
+        
+        self.nlp = spacy.load("fr_core_news_sm")
         
         
 
@@ -94,13 +97,62 @@ class FileHandler:
                     data = await self.load_file(full_path)
                     chunks = self.text_splitter.split_documents(data)
                     for chunk in chunks:
-                        chunk.metadata['source'] = file_path
-                    
-                    try:
-                        self.collection.add_documents(documents=chunks)
-                        log.success(f"Le fichier '{file_path}' a été ajouté avec succès à la collection.")
-                    except Exception as e:
-                        log.err(f"Erreur lors de l'ajout du fichier '{file_path}' à la collection : {e}")
-                        return
+                        doc_nlp = self.nlp(chunk.page_content)
+                        
+                        people = []
+                        dates = []
+                        orgs = []
+                        gpe = []
+                        loc =[]
+                        product = []
+                        event = []
+                        
+                        for ent in doc_nlp.ents:
+                            
+                            if ent.label_ in ("PER", "PERSONNE"):
+                                people.append(ent.text)
+                            elif ent.label_ == "DATE":
+                                dates.append(ent.text)
+                            elif ent.label_ == "ORG":
+                                orgs.append(ent.text)
+                            elif ent.label_ == "GPE":
+                                gpe.append(ent.text)
+                            elif ent.label_ == "LOC":
+                                loc.append(ent.text)
+                            elif ent.label_ == "PRODUCT":
+                                product.append(ent.text)
+                            elif ent.label_ == "EVENT":
+                                event.append(ent.text)
+
+                        metadata = {"source": file_path}
+
+                        if people:
+                            metadata["people"] = list(set(people))
+
+                        if dates:
+                            metadata["dates"] = list(set(dates))
+
+                        if orgs:
+                            metadata["organizations"] = list(set(orgs))
+
+                        if gpe:
+                            metadata["geopolitical_entity"] = list(set(gpe))
+
+                        if loc:
+                            metadata["location"] = list(set(loc))
+
+                        if product:
+                            metadata["product"] = list(set(product))
+
+                        if event:
+                            metadata["event"] = list(set(event))
+
+                        chunk.metadata = metadata
+                try:
+                    self.collection.add_documents(documents=chunks)
+                    log.success(f"Le fichier '{file_path}' a été ajouté avec succès à la collection.")
+                except Exception as e:
+                    log.err(f"Erreur lors de l'ajout du fichier '{file_path}' à la collection : {e}")
+                    return
 
         log.success("Collection chargée avec succès!")

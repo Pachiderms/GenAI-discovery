@@ -21,6 +21,15 @@ else
     echo "Model mistral:7b already exists. Skipping pull."
 fi
 
+if ! ollama list | grep -q "nomic-embed-text"; then
+    echo "Pulling mistral:7b..."
+    ollama pull nomic-embed-text
+    echo "Model pulled successfully."
+else
+    echo "Model nomic-embed-text already exists. Skipping pull."
+fi
+
+
 # Start your Python application
 echo "Starting Uvicorn..."
 exec uvicorn srcs.main:app --host 0.0.0.0 --port 8000

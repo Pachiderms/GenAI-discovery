@@ -1,0 +1,9 @@
+langchain_chroma==1.1.0
+langchain_classic==1.0.8
+langchain_community==0.4.2
+langchain_ollama==1.1.0
+langchain_text_splitters==1.1.2
+pyaudio==0.2.14
+spacy==3.8.14
+speechrecognition==3.17.0
+vosk==0.3.45

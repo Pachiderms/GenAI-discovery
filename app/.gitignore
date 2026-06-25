@@ -1,0 +1,3 @@
+backend/db/
+backend/chroma_db
+.venv

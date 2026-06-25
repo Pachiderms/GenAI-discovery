@@ -6,14 +6,14 @@ const micBtn = document.getElementById('mic-btn');
 // Charger l'historique au démarrage
 window.addEventListener('load', async () => {
     try {
-        const response = await fetch('http://localhost:8000/history');
-        const data = await response.json();
-        data.forEach(msg => {
+        const history = await fetch('http://localhost:8000/history');
+        const historyData = await history.json();
+        historyData.forEach(msg => {
             appendMessage('user', msg.user_query);
             appendMessage('bot', msg.ai_response);
         });
     } catch (e) {
-        console.error("Erreur historique:", e);
+        console.error("Erreur de démarrage:", e);
     }
 });
 
@@ -98,7 +98,7 @@ function startRecording() {
                     return fetch('http://localhost:8000/ask', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({question: data.transcription})
+                        body: JSON.stringify({'question': data.transcription})
                     });
                 })
                 .then(response => response.json())

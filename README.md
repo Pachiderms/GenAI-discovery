@@ -1,149 +1,373 @@
-# GenAI-discovery
+# GenAI Discovery
+
 ## Description
-Ce projet met en place un environnement souverain de test complet pour l'expérimentation de modèles d'IA générative en local tout en garantissant la confidentialité absolue des données.
-- Infrastructure : Déploiement de modèles open-source via Ollama (Mistral:7B, Phi3) en local.
-- RAG (Retrieval-Augmented Generation): Développement d'un script Python utilisant LangChain et ChromaDB pour indexer et interroger des documents PDF privés.
-- Optimisation : Mise en place d'une persistance de base de données vectorielle pour éviter la redondance des calculs d'embeddings.
-- Benchmarking : Analyse comparative des performances de génération (vitesse en tokens/sec vs précision du raisonnement).
-## Tests
-### 1. Benchmark -> ./benchmark
-![](images/benchmark_m_phi%20.png)
-On remarque une différence très marquée entre les deux modèles notamment sur le nombre de tokens/sec avec 90.30 pour mistral contre 151.92 pour phi3. Cela s'explique par le fait que mistral est un modèle à 7,3 millards de paramètres contre 3,8 milliards pour phi3.
 
-En termes d'usage des ressources de mon GPU, l'usage de la VRAM est identique pour les deux modèles avec une horloge qui plafone à 9846MHz. Par contre, pour l'usage du processuer graphique le modèle mistral plaonne a 98% d'utlisation des ressources contre 92% pour phi3.
+Ce projet a pour objectif d'explorer les principaux concepts de l'IA générative moderne à travers une série d'expérimentations progressives réalisées dans un environnement entièrement local et souverain.
 
-Phi3 de par son nombre de paramètres reduit à une efficacité énergétique bien supérieure à celle de mistral car il nécessite moins de calcul pour générer une réponse. Cela peut-être considéré comme un avantage pour une entreprise cherchant à faire des économies. Cela permet aussi à phi3 de pouvoir fonctionner sur des appareils plus limités en ressources comme un smartphone par exemple.
+L'objectif n'est pas uniquement de déployer un modèle de langage, mais de comprendre les problématiques associées à l'utilisation de l'IA générative en entreprise :
 
-## 2. Efficacité energetique vs performance
-![](images/mistral7b_vs_phi3b.png)
-- Comme on peut le voir si dessus, mistral cherche une approche mathématiquement correcte et explique de façon structurée et claire. Il a une approche pédagogique comme on pourrait s'y attendre pour un élève de primaire.
-- phi3 lui, ne remet pas en question l'assertion de base et se permet de rajouter du contexte pour justifier l'erreur. Le modèle construit des phrases grammaticalement incorrectes (surrement du à une traduction compliquée pour le modèle) et/ou difficles à comprendre pour un élève dde primaire.
-De plus, j'ai essayé de faire comprendre au modèle qu'il avait tort mais il est incapable de le reconnaître et se contente de reformuler sa réponse. Après plusieurs tentatives, le modèle étant incapable de répondre génère une réponse hors sujet de plus de 100 lignes et bascule en anglais pour la réponse.
+* performances des modèles ;
+* consommation de ressources ;
+* souveraineté des données ;
+* qualité des réponses ;
+* recherche documentaire augmentée (RAG) ;
+* interaction utilisateur ;
+* intégration dans une application complète.
 
-## Conclusion, Résumé
-|        | Avantages | Inconvénients |
-|:------ |:---------:|:-------------:|
-| Mistral | reponses stables, pertinentes, Connaissances gloabales accrues  (langues, logique...) | Plus demandeur en ressources, plus energivore
-| Phi3    | Moindre coût et taille, Rapport taille/pertinence des réponses ok, portabilité | Connaissances gloabales moyennes (langues, logique...), style verbeux et répétitif, erreurs si logique complexe dans la requete
+Le projet a évolué selon trois grandes étapes :
 
-## IA Generative locale (RAG) -> ./rag/
-### 1. Déploiement d'un Pipeline RAG
-Utilisation de Langchain et ChromaDB pour la mise en place d'un système capable d'extraire des informations spécifiques depuis des documents volumineux chargés par chunks de 500 caractères avec un overlap de 100 pour une pertinence optimale dans les réponses de l'agent.
-### 2. Persistence des données
-Optimisation de la base de données pour éviter la redondance d'indexation (Logique de stockage local persistant).
-### 3. Protection des données
-Approche locale sans appels à une API tierce.
-J'ai favorisé l'usage d'un modèle Européen: Mistral, acteur qui respecte les standards de transparence
-## Remarques
-### Réponse avec la recherche par similarity (Similarity Search)
+1. Évaluation et comparaison de modèles de langage open-source.
+2. Construction d'un système RAG souverain capable d'interroger une base documentaire privée.
+3. Développement d'une application web complète permettant d'interagir avec le système.
+
+❕❕ Pour tester les parties 2 et 3 du projet, une archive zip avec des données de test est prévue
+
 ```bash
-retriever = collection.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 10}
-)
+db.zip
 ```
-![](images/recherche_similarity_simple.png)
-### Réponse avec la recherche par MMR (Maximal Marginal Relevance)
-```bash
-retriever = collection.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 10}
-)
+
+A extraire 2 fois:
+* ./rag/db pour l'étape 2
+* ./app/backend/db pour l'étape 3
+
+⚠️ Il y'a 100 fichiers présents dans l'archive, le premier chargement peut prendre un certain temps selon le materiel utilisé.
+
+---
+
+# Objectifs du Projet
+
+## Découvrir l'IA générative
+
+Comprendre :
+
+* le fonctionnement des LLM ;
+* les contraintes matérielles ;
+* les compromis entre performance et coût ;
+* les mécanismes de recherche augmentée.
+
+## Explorer les enjeux de souveraineté
+
+L'ensemble des expérimentations est réalisé localement grâce à des modèles open-source afin de :
+
+* conserver les données sur l'infrastructure locale ;
+* éviter l'utilisation d'API tierces ;
+* garantir la confidentialité des informations manipulées.
+
+## Construire progressivement une solution complète
+
+Le projet suit une approche incrémentale :
+
+```text
+Benchmark LLM
+      ↓
+Analyse des performances
+      ↓
+Mise en place d'un RAG local
+      ↓
+Enrichissement NER
+      ↓
+Reconnaissance vocale
+      ↓
+Application Web Fullstack
 ```
-![](images/recherche_mmr.png)
-### Réponse avec la recherche Similarity Score Threshold
-```bash
-retriever = collection.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"score_threshold": 0.2}
-)
+
+---
+
+# Architecture Globale
+
+```text
+                         ┌───────────────┐
+                         │ Utilisateur   │
+                         └───────┬───────┘
+                                 │
+                                 ▼
+                     ┌──────────────────────┐
+                     │ Interface Web        │
+                     └──────────┬───────────┘
+                                │
+                                ▼
+                     ┌──────────────────────┐
+                     │ API FastAPI          │
+                     └──────────┬───────────┘
+                                │
+             ┌──────────────────┼──────────────────┐
+             │                  │                  │
+             ▼                  ▼                  ▼
+      Reconnaissance      Pipeline RAG        Historique
+          Vocale             Local
+
+             │                  │
+             ▼                  ▼
+
+            Vosk       ChromaDB + NER
+                               │
+                               ▼
+
+                         Mistral 7B
+                               │
+                               ▼
+
+                          Réponse
 ```
-![](images/similarity_score_threshold.png)
 
-### On voit que les 3 méthodes sont équivalentes. Cependant en affinant la recherche on se retrouve rapidement aves des résultats plus satisfaisants
-```bash
-retriever = collection.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 10, "fetch_k": 20, "lambda_mult": 0.25, "score_threshold": 0.2}
-)
+---
+
+# Expérimentation 1 : Benchmark des LLM
+
+## Objectif
+
+Comparer différents modèles open-source afin d'évaluer :
+
+* leur vitesse d'inférence ;
+* leur consommation de ressources ;
+* leur qualité de raisonnement ;
+* leur efficacité énergétique.
+
+## Modèles testés
+
+* Mistral 7B
+* Phi-3
+
+## Résultats
+
+### Performances
+
+| Modèle     | Tokens/sec |
+| ---------- | ---------: |
+| Mistral 7B |      90.30 |
+| Phi-3      |     151.92 |
+
+Phi-3 se montre nettement plus rapide grâce à son nombre réduit de paramètres.
+
+### Qualité des réponses
+
+Les expérimentations montrent que :
+
+* Mistral fournit des réponses plus stables et plus cohérentes ;
+* Phi-3 est plus rapide mais peut rencontrer des difficultés sur les raisonnements complexes.
+
+### Enseignements
+
+Cette première étape met en évidence le compromis classique :
+
+| Critère                  | Mistral         | Phi-3         |
+| ------------------------ | --------------- | ------------- |
+| Vitesse                  | Moyen           | Élevée        |
+| Qualité du raisonnement  | Élevée          | Moyenne       |
+| Consommation énergétique | Plus importante | Plus faible   |
+| Taille du modèle         | Plus grande     | Plus compacte |
+
+📁 Voir le détail dans :
+
+```text
+./benchmark
 ```
-![](images/recherche_mmr_affinee.png)
 
-### Pourquoi choisir le MMR ?
-A mesure que la base de données grandit, le MMR permet d'éviter la redondance des réponses en favorisant la diversité dans ses choix. On obtient ainsi un compromis entre pertinance et diversité ce qu'on ne retrouve pas avec les autres options.
+---
 
-## Application Web Fullstack -> ./app/
+# Expérimentation 2 : IA Générative Souveraine et RAG
 
-### Architecture Générale
-Déploiement d'une application web complète pour interagir avec le système de RAG local. L'architecture suit un modèle client-serveur avec séparation claire entre le frontend (interface utilisateur) et le backend (logique métier et intégrations).
+## Objectif
 
-### 1. Backend Python (FastAPI)
+Permettre à un modèle de répondre à partir de documents privés sans transmettre les données à des services externes.
 
-#### Composants Principaux
-- **main.py** : Serveur FastAPI exposant les endpoints de l'API REST pour la communication avec le frontend.
-- **rag_logic.py** : Implémentation du pipeline RAG utilisant LangChain et Ollama (Mistral 7B) avec ChromaDB pour la récupération d'informations contextualisées.
-- **file_handler.py** : Gestion des documents (upload, traitement et indexation) et persistance de la base de données vectorielle.
-- **audio_manager.py** : Transcription audio en texte via Vosk avec support du français, permettant une interaction vocale avec le système.
-- **prompt_templates.py** : Définition des prompts système optimisés pour les tâches de génération et de réponse contextuelle.
+## Technologies
 
-#### Fonctionnalités Clés
-- API REST pour le traitement des requêtes textelles et la gestion de l'historique conversationnel.
-- Transcription audio en temps réel avec reconnaissance vocale (Vosk).
-- Intégration transparente du RAG avec contexte conversationnel persistant.
-- Support CORS pour l'intégration frontend.
-- Gestion asynchrone des requêtes pour optimiser la performance.
+* Ollama
+* Mistral 7B
+* LangChain
+* ChromaDB
+* SpaCy
+* Vosk
+* SpeechRecognition
 
-### 2. Frontend Web
+## Fonctionnalités
 
-#### Composants
-- **index.html** : Structure HTML de l'interface utilisateur.
-- **app.js** : Logique JavaScript pour la communication avec l'API, gestion de l'interface et interaction utilisateur.
-- **style.css** : Styles CSS pour une interface moderne et réactive.
-- **app.conf** : Configuration de l'application web.
+### Indexation documentaire
 
-#### Fonctionnalités
-- Interface conviviale pour soumettre des questions et recevoir des réponses augmentées par RAG.
-- Intégration avec la transcription audio pour une interaction vocale fluide.
-- Affichage de l'historique conversationnel.
-- Gestion dynamique du contexte utilisateur.
+Support :
 
-### 3. Déploiement et Orchestration
+* PDF
+* DOCX
+* TXT
 
-#### Docker et Compose
-- **docker-compose.yml** : Orchestration des services (backend, frontend, base de données) dans des conteneurs isolés avec support GPU et volumes persistants.
-- **Dockerfile** (backend et frontend) : Images contenerisées pour déploiement consistent.
-- **Makefile** : Automatisation des commandes courantes (build, run, clean, logs).
-- **pyproject.toml** : Gestion des dépendances Python du projet.
+### Recherche sémantique
 
-#### Avantages
-- Isolation complète des services pour une meilleure maintenabilité.
-- Support GPU pour accélération des modèles d'IA.
-- Déploiement reproducible et facilité de scalabilité.
+Utilisation :
 
-### 4. Pipeline Complet
+* Embeddings Nomic
+* ChromaDB
+* MMR (Maximal Marginal Relevance)
 
-Le flux d'interaction utilisateur :
-1. Utilisateur soumet une question (textuelle ou vocale).
-2. Frontend envoie la requête au backend via API REST.
-3. Backend transcrit l'audio si nécessaire (AudioManager).
-4. RAG Logic récupère les documents pertinents (ChromaDB).
-5. LLM (Mistral 7B) génère une réponse contextualisée.
-6. Réponse retournée au frontend avec historique mis à jour.
+### Enrichissement NER
 
-### <u>**Showcase**
-![](images/web00.png)
-![](images/web01.png)
-![](images/web02.png)
-![](images/web03.png)
+Ajout d'une couche de compréhension documentaire grâce à :
 
-## Sources
-- [HuggingFace](https://huggingface.co/)
-- [Ollama](https://ollama.com/)
-- [ChromaDB](https://docs.trychroma.com/docs/)
-- [Langchain](https://reference.langchain.com/)
-- [SpeechRecognition](https://pypi.org/project/SpeechRecognition/)
-- [Vosk](https://alphacephei.com/vosk/)
-- [PyAudio](https://people.csail.mit.edu/hubert/pyaudio/docs/)
-- [MediaStreamRecordingAPI](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API)
-- [Vosk .wav To text](https://github.com/andrewymin/audio-to-text/blob/master/transcribe.py)
-- [Docker GPU support](https://docs.docker.com/compose/how-tos/gpu-support/)
+* la détection de personnes ;
+* la détection d'organisations ;
+* la détection de dates ;
+* la détection de lieux.
+
+Les résultats du retrieval sont ensuite rerankés afin d'améliorer la pertinence du contexte envoyé au modèle.
+
+### Souveraineté des données
+
+L'ensemble du pipeline fonctionne localement :
+
+| Composant        | Exécution |
+| ---------------- | --------- |
+| LLM              | Local     |
+| Embeddings       | Local     |
+| Base vectorielle | Local     |
+| NLP              | Local     |
+| Speech-To-Text   | Local     |
+
+Aucune donnée n'est envoyée à un fournisseur tiers.
+
+### Enseignements
+
+Cette étape a permis de comprendre :
+
+* les limites des LLM seuls
+* l'intérêt du Retrieval-Augmented Generation
+* l'importance de la qualité du retrieval
+* l'apport du NER dans la recherche documentaire
+
+📁 Voir le détail dans :
+
+```text
+./rag
+```
+
+---
+
+# Expérimentation 3 : Application Web Fullstack
+
+## Objectif
+
+Transformer le prototype RAG en une application utilisable par un utilisateur final.
+
+## Backend
+
+Développement d'une API FastAPI assurant :
+
+* la communication avec le frontend
+* l'orchestration du pipeline RAG
+* la gestion de l'historique
+* le traitement audio
+
+## Frontend
+
+Développement d'une interface web permettant :
+
+* la saisie de questions
+* l'affichage des réponses
+* l'interaction vocale
+* la consultation de l'historique
+
+## Reconnaissance Vocale
+
+Ajout de :
+
+* Vosk
+* SpeechRecognition
+* PyAudio
+
+Le système est capable de recevoir une requête vocale et de l'intégrer directement dans le pipeline RAG.
+
+### Enseignements
+
+Cette dernière étape permet de comprendre :
+
+* l'intégration d'un LLM dans une architecture applicative ;
+* la gestion d'API IA ;
+* l'expérience utilisateur autour d'un assistant IA ;
+* les contraintes de déploiement d'une solution d'IA générative.
+
+📁 Voir le détail dans :
+
+```text
+./app
+```
+
+---
+
+# Technologies Utilisées
+
+## IA Générative
+
+* Ollama
+* Mistral 7B
+* Phi-3
+* Nomic Embed Text
+
+## RAG
+
+* LangChain
+* ChromaDB
+
+## NLP
+
+* SpaCy
+
+## Audio
+
+* Vosk
+* SpeechRecognition
+* PyAudio
+
+## Backend
+
+* Python
+* FastAPI
+
+## Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+## Conteneurisation
+
+* Docker
+* Docker Compose
+
+---
+
+# Résultats et Enseignements
+
+Au cours du projet, plusieurs constats ont émergé :
+
+### Les modèles plus petits sont souvent suffisants
+
+Phi-3 démontre qu'un modèle compact peut offrir de très bonnes performances tout en réduisant la consommation énergétique.
+
+### Le RAG est indispensable pour les données métier
+
+Les modèles seuls ne disposent pas de connaissances spécifiques à une organisation.
+
+Le RAG permet d'intégrer ces connaissances de manière contrôlée.
+
+### La qualité du retrieval est critique
+
+L'ajout :
+
+* du MMR ;
+* du NER ;
+* du reranking contextuel ;
+
+améliore significativement la pertinence des réponses.
+
+### La souveraineté est techniquement réalisable
+
+Grâce aux modèles open-source et aux outils locaux, il est possible de construire une solution complète sans dépendre d'API externes et ce même chez soi avec un setup modeste !
+
+---
+
+# Conclusion
+
+Ce projet constitue un parcours complet de découverte de l'IA générative moderne.
+
+À travers le benchmarking de modèles, la construction d'un système RAG souverain puis le développement d'une application web complète, il permet d'explorer les principaux enjeux techniques, économiques et stratégiques liés à l'intégration des LLM dans un contexte professionnel.
+
+L'ensemble des expérimentations démontre qu'il est aujourd'hui possible de déployer une solution d'IA générative performante, extensible et respectueuse de la souveraineté des données en s'appuyant exclusivement sur des technologies open-source.

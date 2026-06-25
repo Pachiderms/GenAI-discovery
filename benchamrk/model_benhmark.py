@@ -21,7 +21,7 @@ def test_speed(model_name, prompt, num_iterations=10):
     print(f"Tokens per second (avg based): {tps:.2f}")
 
 if __name__ == "__main__":
-    mistral = "mistral:7b"
+    mistral = "mistral"
     phi = "phi3"
     prompt = "Talk about minimax algorithm in 200 words maximum."
     test_speed(mistral, prompt)
